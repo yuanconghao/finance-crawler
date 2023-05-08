@@ -12,8 +12,8 @@ finance_url = 'https://top.finance.sina.com.cn/ws/GetTopDataList.php?top_type=da
 
 finance_roll_url = 'https://finance.sina.com.cn/roll/index.d.html?cid={}&page={}'
 
-page_index_num = 100
-gg_date_start = '2023-04-01'
+page_index_num = 1
+gg_date_start = '2023-04-04'
 gg_date_end = '2023-05-08'
 stock_url = 'https://vip.stock.finance.sina.com.cn/corp/view/vCB_BulletinGather.php?gg_date={}&page_index={}'
 
@@ -61,4 +61,4 @@ while gg_date_start_ts < gg_date_end_ts:
             if len(content['content']) == 0:
                 continue
             process.save(content, './data/stock/')
-            time.sleep(1)
+            time.sleep(0.5)
