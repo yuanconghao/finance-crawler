@@ -11,10 +11,9 @@ def save(data, path=''):
     """
     filename = data['title'] + '.txt'
     date = data['date']
-    source = data['source']
     content = data['content']
     if path != '':
-        filepath = os.path.join(path, filename)
+        filepath = path
     else:
         filepath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         filepath = os.path.join(filepath, 'data')
@@ -28,7 +27,6 @@ def save(data, path=''):
     with open(file_save_path, "w") as f:
         f.write(data['title'] + "\n")
         f.write(date + "\n")
-        f.write(source + "\n")
         for item in content:
             f.write(item + "\n")
 

@@ -75,8 +75,86 @@ def parser_html(url):
         print(e)
 
 
+def parser_stock_urls(url):
+    base_url = 'http://vip.stock.finance.sina.com.cn'
+    url_lists = []
+    try:
+        html = requests.get(url).content
+        soup = BeautifulSoup(html, "html.parser")
+        if soup is None:
+            return url_lists
+
+        tbody = soup.find(name='tbody')
+        if tbody is None:
+            return url_lists
+        tr_tags = tbody.find_all(name='tr')
+        if len(tr_tags) < 2:
+            return url_lists
+
+        for tr in tr_tags:
+            uri = tr.find_all(name='a')[0]['href']
+            url = base_url + uri
+            url_lists.append(url)
+        return url_lists
+    except Exception as e:
+        print(e)
+
+
+def parser_stock_html(url):
+    content = {
+        'title': '',
+        'date': '',
+        'content': []
+    }
+    try:
+        html = requests.get(url).content
+        soup = BeautifulSoup(html, "html.parser")
+        if soup is None:
+            return content
+
+        title = soup.find(name='title')
+        if title is None:
+            return content
+        title = re.sub(r'\/', '', title.text)
+        if title != '':
+            content["title"] = title
+
+        content_attrs = {'class': 'centerImgBlk'}
+        content_tag = soup.find(name='div', attrs=content_attrs)
+        if content_tag is None:
+            return content
+
+        tbody = content_tag.find(name='tbody')
+        if tbody is None:
+            return content
+
+        tr_tags = tbody.find_all(name='tr')
+        date = tr_tags[0].find(name='td').text
+        if date != '':
+            content['date'] = date
+
+        p_tags = tr_tags[1].find_all(name='p')
+        data = []
+        for p in p_tags:
+            text = p.text
+            text = re.sub(r'\s+', '', text)
+            data.append(text)
+        content['content'] = data
+        return content
+    except Exception as e:
+        print(e)
+
+
 if __name__ == '__main__':
     # url = 'https://finance.sina.com.cn/money/future/agri/2023-04-25/doc-imyrqier4433773.shtml'
     # url = "https://finance.sina.com.cn/money/future/roll/2023-04-25/doc-imyrqyai4423338.shtml"
-    url = 'https://finance.sina.com.cn/money/bank/2023-05-01/doc-imysfmex1389245.shtml'
-    print(parser_html(url))
+    # url = 'https://finance.sina.com.cn/money/bank/2023-05-01/doc-imysfmex1389245.shtml'
+    # print(parser_html(url))
+
+    # url = 'https://vip.stock.finance.sina.com.cn/corp/view/vCB_BulletinGather.php?page_index=100'
+    # print(parser_stock_urls(url))
+    url = 'https://vip.stock.finance.sina.com.cn/corp/view/vCB_BulletinGather.php?gg_date=2023-05-01&page_index=1'
+    print(parser_stock_urls(url))
+
+    # url = 'http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?CompanyCode=80537583&gather=1&id=9188858'
+    # print(parser_stock_html(url))
